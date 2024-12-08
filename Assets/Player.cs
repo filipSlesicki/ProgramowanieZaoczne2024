@@ -5,55 +5,58 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public float movementSpeed = 1;
+    public float jumpSpeed = 1;
     public float rotationSpeed = 1;
+    private Rigidbody rb;
+    private bool isJumping;
+    public bool canJump;
 
     // Komentarz
     // Start is called before the first frame update
     void Start()
     {
-
+        rb = GetComponent<Rigidbody>();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space) && canJump)
+        {
+            isJumping = true;
+        }
+    }
+
+    private void FixedUpdate()
+    {
         // GetAxis : A = -1 , D = 1, Brak inputu = 0
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         float verticalInput = Input.GetAxisRaw("Vertical");
-        Vector3 moveVector = new Vector3(horizontalInput, verticalInput, 0); // kierunek
-        //if(moveVector.magnitude > 1 )
-        //{
-        //    // Normalize() ustawia d³ugoœæ wektora na 1, zachowuj¹c kierunek
-        //    moveVector.Normalize();
-        //}
 
+        Vector3 moveVector = new Vector3(horizontalInput, 0, verticalInput); // kierunek
         moveVector = Vector3.ClampMagnitude(moveVector, 1); // Ogranicza d³ugoœæ wektora do podanej wartoœæi ( w tym wypadku 1)
-        moveVector *= Time.deltaTime * movementSpeed; // prêdkoœæ
-        transform.Translate(moveVector);
-        //transform.position += moveVector;
-        
-        //if (Input.GetKey(KeyCode.D))
-        //{
-        //    transform.Translate(movementSpeed * Time.deltaTime, 0, 0);
-        //}
-        //if (Input.GetKey(KeyCode.A))
-        //{
-        //    transform.Translate(-movementSpeed * Time.deltaTime, 0, 0);
-        //}
-        //if (Input.GetKey(KeyCode.W))
-        //{
-        //    transform.Translate(0, movementSpeed * Time.deltaTime, 0);
-        //}
-        //if (Input.GetKey(KeyCode.S))
-        //{
-        //    transform.Translate(0, -movementSpeed * Time.deltaTime, 0);
-        //}
-
-        // Mno¿ymy razy Time.deltaTime ¿eby zamieniæ prêdkoœæ na klatkê na prêdkoœæ na sekundê
-        //transform.Translate(0,-1 * Time.deltaTime,0);
-        //transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);
-        //transform.position += Vector3.down * fallingSpeed * Time.deltaTime;
-        // Inny zapis
-        // tansform.position = transform.position + Vector3.down * Time.deltaTime;
+        moveVector *= movementSpeed;
+        if (isJumping) // skok
+        {
+            moveVector.y = jumpSpeed;
+            isJumping = false;
+        }
+        else
+        {
+            moveVector.y = rb.velocity.y;
+        }
+        CharacterController controller = GetComponent<CharacterController>();
+        rb.velocity = moveVector;
     }
+
+    //private bool CanJump()
+    //{
+    //    Debug.Log(rb.velocity.y);
+    //    if(rb.velocity.y < 0.01f && rb.velocity.y > -0.01f)
+    //    {
+    //        return true;
+    //    }
+    //    return false;
+    //}
 }
