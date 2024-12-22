@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public int maxHealth = 5;
+    public int health = 5;
     public float movementSpeed = 1;
     public float jumpSpeed = 1;
     public float rotationSpeed = 1;
@@ -50,13 +52,13 @@ public class Player : MonoBehaviour
         rb.velocity = moveVector;
     }
 
-    //private bool CanJump()
-    //{
-    //    Debug.Log(rb.velocity.y);
-    //    if(rb.velocity.y < 0.01f && rb.velocity.y > -0.01f)
-    //    {
-    //        return true;
-    //    }
-    //    return false;
-    //}
+    public void AddHealth(int value)
+    {
+        health += value;
+
+        if (health > maxHealth)
+        {
+            health = maxHealth;
+        }
+    }
 }
