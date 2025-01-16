@@ -35,7 +35,6 @@ public class Player : MonoBehaviour
         // GetAxis : A = -1 , D = 1, Brak inputu = 0
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         float verticalInput = Input.GetAxisRaw("Vertical");
-
         Vector3 moveVector = new Vector3(horizontalInput, 0, verticalInput); // kierunek
         moveVector = Vector3.ClampMagnitude(moveVector, 1); // Ogranicza d³ugoœæ wektora do podanej wartoœæi ( w tym wypadku 1)
         moveVector *= movementSpeed;
@@ -48,7 +47,7 @@ public class Player : MonoBehaviour
         {
             moveVector.y = rb.velocity.y;
         }
-        CharacterController controller = GetComponent<CharacterController>();
+
         rb.velocity = moveVector;
     }
 
@@ -60,5 +59,7 @@ public class Player : MonoBehaviour
         {
             health = maxHealth;
         }
+
+        enabled = false;
     }
 }

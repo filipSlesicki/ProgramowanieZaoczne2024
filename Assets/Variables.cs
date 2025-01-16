@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 //Zmienne
 // int - Liczba ca³kowita (1, 220, -234)
@@ -20,6 +21,7 @@ public class Variables : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         int a = 2;
         a = b * 5;
         a = a + 3;
