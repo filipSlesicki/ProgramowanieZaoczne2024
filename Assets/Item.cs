@@ -8,6 +8,11 @@ public class Item : MonoBehaviour
     [SerializeField] Material highlightedMaterial;
     [SerializeField] Material normalMaterial;
 
+    public void DoSomething()
+    {
+
+    }
+
     private void Start()
     {
         meshRenderer = GetComponent<MeshRenderer>();

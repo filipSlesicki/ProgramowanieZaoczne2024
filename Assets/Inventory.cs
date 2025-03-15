@@ -5,11 +5,11 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     // Hashset to kolekcja w której nie ma duplikatów
-    private HashSet<string> itemNames = new HashSet<string>();
+    private List<string> itemNames = new List<string>();
+    private Item selectedItem;
 
     void Start()
     {
-
     }
 
     // Update is called once per frame
@@ -21,28 +21,49 @@ public class Inventory : MonoBehaviour
             foreach (string itemName in itemNames)
             {
                 // itemName to nazwa ka¿dego kolejnego elementu w liœcie/tablicy
-                Debug.Log(itemName);
+                //Debug.Log(itemName);
+            }
+
+            for(int i = 0; i < itemNames.Count; i++)
+            {
+                Debug.Log(itemNames[i]);
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKey(KeyCode.Tab))
         {
-            // ZnajdŸ wszystkie obiekty na scenie ze <Skryptem>
-            Item[] items = FindObjectsByType<Item>(FindObjectsSortMode.None);
-            foreach (Item item in items)
+            SelectClosestItem();
+        }
+        else if (selectedItem != null)
+        {
+            selectedItem.SetNormalColor();
+        }
+    }
+
+    private void SelectClosestItem()
+    {
+        // ZnajdŸ wszystkie obiekty na scenie ze <Skryptem>
+        Item[] items = FindObjectsByType<Item>(FindObjectsSortMode.None);
+        Item closestItem = null;
+        float bestDistance = float.MaxValue;
+        foreach (Item item in items)
+        {
+            float distance = Vector3.Distance(transform.position, item.transform.position);
+            if (distance < bestDistance)
             {
-                item.Highlight();
+                bestDistance = distance;
+                closestItem = item;
             }
         }
 
-        if (Input.GetKeyUp(KeyCode.Tab))
+        if (closestItem != null)
         {
-            Item[] items = FindObjectsByType<Item>(FindObjectsSortMode.None);
-           
-            foreach (Item item in items)
+            if (selectedItem != null)
             {
-                item.SetNormalColor();
+                selectedItem.SetNormalColor();
             }
+            selectedItem = closestItem;
+            closestItem.Highlight();
         }
     }
 
