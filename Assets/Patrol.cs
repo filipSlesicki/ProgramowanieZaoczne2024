@@ -11,7 +11,7 @@ public class Patrol : MonoBehaviour
     [SerializeField] private Transform[] patrolPoints;
     [SerializeField] private float detectionRange = 5;
     int patrolPointIndex = 0;
-    private bool playerDetected;
+    public bool playerDetected;
 
     void Start()
     {
@@ -40,29 +40,39 @@ public class Patrol : MonoBehaviour
 
     void DetectPlayer()
     {
+        playerDetected = false;
         float distanceToPlayer = Vector3.Distance(player.position, transform.position);
         bool playerInRange = distanceToPlayer < detectionRange;
         if (playerInRange)
         {
+            Color rayColor = Color.white;
             Vector3 directionToPlayer = (player.position - transform.position).normalized;
             if (!Physics.Raycast(eyes.position, directionToPlayer, out RaycastHit hit, distanceToPlayer, obstacleLayer))
             {
+                rayColor = Color.red;
                 playerDetected = true;
             }
         }
     }
 
+    [SerializeField] private float rotationSpeed = 10;
+
     void MoveToPatrolPoint()
     {
+
         Transform currentPatrolPoint = patrolPoints[patrolPointIndex];
         Vector3 directionToPoint = (currentPatrolPoint.position - transform.position).normalized;
-        transform.Translate(moveSpeed * Time.deltaTime * directionToPoint);
+        transform.Translate(moveSpeed * Time.deltaTime * directionToPoint,Space.World);
+        Quaternion toTarget = Quaternion.LookRotation(directionToPoint);
+        //transform.rotation = Quaternion.Slerp(transform.rotation, toTarget, rotationSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, toTarget, rotationSpeed * Time.deltaTime);
 
         if (Vector3.Distance(transform.position, currentPatrolPoint.position) < 0.1f)
         {
             //patrolPointIndex = Random.Range(0, patrolPoints.Length); // Losowy punkt
 
             // Nastêpny punkt
+            Debug.Log("Next point");
             patrolPointIndex++;
             if (patrolPointIndex >= patrolPoints.Length)
             {
@@ -73,8 +83,14 @@ public class Patrol : MonoBehaviour
     }
     [SerializeField] private float detectionAngle = 45;
 
+    [SerializeField] Vector3 point1;
+    [SerializeField] Vector3 point2;
+    [SerializeField] float t;
+
     private void OnDrawGizmosSelected()
     {
+        Gizmos.DrawLine(point1,point2);
+        Gizmos.DrawSphere(Vector3.Lerp(point1, point2, t), 0.1f);
         float leftAngle = eyes.rotation.eulerAngles.y + detectionAngle;
         Vector3 leftDirection =   Quaternion.Euler(new Vector3(0, detectionAngle, 0)) * eyes.forward;
         Gizmos.DrawRay(eyes.position, leftDirection*3);
