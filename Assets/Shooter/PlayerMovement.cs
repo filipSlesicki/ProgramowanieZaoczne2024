@@ -15,6 +15,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void Move(Vector3 moveDirection)
     {
+
         characterController.Move(moveDirection * movementSpeed * Time.deltaTime);
     }
 }

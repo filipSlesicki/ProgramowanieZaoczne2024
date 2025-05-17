@@ -23,7 +23,8 @@ public class FPSPlayer : MonoBehaviour
     {
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         float verticalInput = Input.GetAxisRaw("Vertical");
-        Vector3 movementVector = (new Vector3(horizontalInput, 0, verticalInput)).normalized;// * movementSpeed * Time.deltaTime;
+        Vector3 movementInput = (new Vector3(horizontalInput, 0, verticalInput)).normalized;// * movementSpeed * Time.deltaTime;
+        Vector3 movementVector = transform.forward * movementInput.z + transform.right * movementInput.x;
         playerMovement.Move(movementVector);
 
         float mouseHorizontalInput = Input.GetAxisRaw("Mouse X");
@@ -34,6 +35,26 @@ public class FPSPlayer : MonoBehaviour
         if(Input.GetButton("Fire1"))
         {
             playerShooting.Shoot();
+        }
+
+        if(Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            playerShooting.ChangeWeapon(0);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            playerShooting.ChangeWeapon(1);
+        }
+
+        float scrollValue = Input.GetAxis("Mouse ScrollWheel");
+        if(scrollValue > 0)
+        {
+            playerShooting.ChangeToNextWeapon();
+        }
+        if (scrollValue < 0)
+        {
+            playerShooting.ChangeToPreviousWeapon();
         }
     }
 }

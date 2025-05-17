@@ -4,41 +4,49 @@ using UnityEngine;
 
 public class PlayerShooting : MonoBehaviour
 {
-    [SerializeField] Camera playerCamera;
-    [SerializeField] private float shootRate = 1;
-    private float shootDelay = 1;
-    private float lastShootTime;
+    [SerializeField] Transform weaponParent;
+    [SerializeField] List<Weapon> weapons;
+    public int currentWeaponIndex;
 
     private void Start()
     {
-        shootDelay = 1 / shootRate;
+        weaponParent.rotation = Camera.main.transform.rotation;
+    }
+
+    public void ChangeWeapon(int index)
+    {
+        weapons[currentWeaponIndex].gameObject.SetActive(false);
+        currentWeaponIndex = index;
+        weapons[currentWeaponIndex].gameObject.SetActive(true);
+    }
+
+    public void ChangeToNextWeapon()
+    {
+        int targetIndex = currentWeaponIndex;
+        targetIndex++;
+        if(targetIndex >= weapons.Count)
+        {
+            targetIndex = 0;
+        }
+
+        ChangeWeapon(targetIndex);
+    }
+
+    public void ChangeToPreviousWeapon()
+    {
+        int targetIndex = currentWeaponIndex;
+        targetIndex--;
+        if (targetIndex < 0)
+        {
+            targetIndex = weapons.Count -1;
+        }
+        ChangeWeapon(targetIndex);
     }
 
     public void Shoot()
     {
-        if(!CanShoot())
-        {
-            return;
-        }
-
-        lastShootTime = Time.time;
-
-        Debug.Log("Shoot");
-        Ray cameraRay = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        Debug.DrawRay(cameraRay.origin, cameraRay.direction * 20,Color.red);
-        if (Physics.Raycast(cameraRay, out RaycastHit hit))
-        {
-            Debug.Log("Hit " + hit.collider.gameObject.name);
-            Health hitHealth = hit.collider.GetComponent<Health>();
-            if(hitHealth != null )
-            {
-                hitHealth.TakeDamage(1);
-            }
-        }
+        weapons[currentWeaponIndex].Shoot();
     }
 
-    private bool CanShoot()
-    {
-        return Time.time > lastShootTime + shootDelay;
-    }
+
 }
